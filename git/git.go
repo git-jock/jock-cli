@@ -28,18 +28,7 @@ func (r run) Run(args []string) {
 	case "clone":
 		gitClone()
 		break
-	case "add":
-	case "restore":
-	case "rm":
-	case "branch":
-	case "commit":
-	case "reset":
-	case "switch":
-	case "tag":
-	case "fetch":
-	case "pull":
-	case "push":
-	case "checkout":
+	case "add", "restore", "rm", "branch", "commit", "reset", "switch", "tag", "fetch", "pull", "push", "checkout":
 		gitCommon(args)
 		break
 	default:
