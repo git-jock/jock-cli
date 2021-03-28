@@ -8,22 +8,6 @@ import (
 
 type run string
 
-var commandHandlers = map[string]interface{}{
-	"clone":    gitClone,
-	"add":      gitCommon,
-	"restore":  gitCommon,
-	"rm":       gitCommon,
-	"branch":   gitCommon,
-	"commit":   gitCommon,
-	"reset":    gitCommon,
-	"switch":   gitCommon,
-	"tag":      gitCommon,
-	"fetch":    gitCommon,
-	"pull":     gitCommon,
-	"push":     gitCommon,
-	"checkout": gitCommon,
-}
-
 func gitClone() {
 }
 
@@ -40,14 +24,28 @@ func (r run) Run(args []string) {
 		os.Exit(1)
 	}
 
-	handler := commandHandlers[args[0]]
-
-	if handler == nil {
+	switch args[0] {
+	case "clone":
+		gitClone()
+		break
+	case "add":
+	case "restore":
+	case "rm":
+	case "branch":
+	case "commit":
+	case "reset":
+	case "switch":
+	case "tag":
+	case "fetch":
+	case "pull":
+	case "push":
+	case "checkout":
+		gitCommon(args)
+		break
+	default:
 		fmt.Println("Unsupported command " + args[0])
 		os.Exit(1)
 	}
-
-	handler.(func([]string))(args)
 }
 
 var JockPlugin run
