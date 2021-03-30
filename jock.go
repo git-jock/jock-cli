@@ -32,7 +32,8 @@ Invocation
  **********************************************/
 
 type FolderConfig struct {
-	Location string `mapstructure:"location"`
+	Location string                 `mapstructure:"location"`
+	Plugins  map[string]interface{} `mapstructure:"plugins"`
 }
 
 // Holds the processed details of the jock invocation for logic to be applied later.

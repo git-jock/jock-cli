@@ -7,13 +7,25 @@
       "minProperties": 1,
       "additionalProperties": false,
       "patternProperties": {
-        "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+        "^[_a-zA-Z0-9][a-zA-Z0-9_-]*$": {
           "description": "Folder and related config to run jock plugins on.",
           "type": "object",
           "properties": {
             "location": {
               "description": "Location of the folder.",
               "type": "string"
+            },
+            "plugins": {
+              "description": "Folder specific configuration for plugins.",
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                "^[_a-zA-Z0-9][a-zA-Z0-9_-]*$": {
+                  "description": "Plugin configuration for parent folder.",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
             }
           },
           "required": [
