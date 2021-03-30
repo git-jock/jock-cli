@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"os"
 )
 
 func main() {
+	readConfig()
+
 	invocation := getInvocationDetails()
 
 	run(invocation)
@@ -25,14 +28,18 @@ func run(invocation *InvocationDetails) {
 }
 
 /**********************************************
-ARGS
+Invocation
  **********************************************/
+
+type FolderConfig struct {
+	Location string `mapstructure:"location"`
+}
 
 // Holds the processed details of the jock invocation for logic to be applied later.
 type InvocationDetails struct {
 	version    bool
 	help       bool
-	folders    []string
+	folders    map[string]FolderConfig
 	plugin     string
 	pluginArgs []string
 }
@@ -41,25 +48,21 @@ type InvocationDetails struct {
 func getInvocationDetails() *InvocationDetails {
 	args := os.Args[1:]
 
-	invocation := &InvocationDetails{}
+	invocation := &InvocationDetails{
+		folders: make(map[string]FolderConfig),
+	}
 
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--help":
-			fallthrough
-		case "-h":
+		case "--help", "-h":
 			invocation.help = true
 			break
-		case "--version":
-			fallthrough
-		case "-v":
+		case "--version", "-v":
 			invocation.version = true
 			break
-		case "--folder":
-			fallthrough
-		case "-f":
-			invocation.folders = append(invocation.folders, args[i+1])
+		case "--folder", "-f":
 			i++
+			invocation.folders[args[i]] = getFolderConfig(args[i])
 			break
 		default:
 			setPluginDetails(invocation, args[i:])
@@ -108,7 +111,52 @@ func displayHelp() {
 	fmt.Println("")
 	fmt.Println("Jock Arguments:")
 	fmt.Println("    --version, -v	Print version and exit")
-	fmt.Println("    --help, -h      Print this help text and exit")
+	fmt.Println("    --help, -h     Print this help text and exit")
 	fmt.Println("    --folder, -f	Define one or more folders to run the plugin command on")
 	os.Exit(0)
+}
+
+/**********************************************
+Config
+**********************************************/
+
+// Reads the config file from ~/.jockrc
+func readConfig() {
+	viper.SetConfigName(".jockrc")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("$HOME")
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// Config file not found; ignore error if desired
+			fmt.Println(err)
+		} else {
+			// Config file was found but another error was produced
+			fmt.Println(err)
+		}
+	}
+}
+
+const FOLDERS = "folders"
+
+// Checks that the config contains the specified folder, and returns marshalled FolderConfig if so.
+func getFolderConfig(name string) FolderConfig {
+	folder := FolderConfig{}
+
+	if !viper.InConfig(FOLDERS) {
+		fmt.Print("Config does not contain folders")
+		os.Exit(1)
+	}
+
+	if !viper.Sub(FOLDERS).InConfig(name) {
+		fmt.Printf("Config folders do not contain [%s]", name)
+		os.Exit(1)
+	}
+
+	err := viper.Sub(FOLDERS).UnmarshalKey(name, &folder)
+	if err != nil {
+		fmt.Printf("Unable to decode into config struct, %v", err)
+		os.Exit(1)
+	}
+
+	return folder
 }

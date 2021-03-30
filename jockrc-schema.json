@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "properties": {
+    "folders": {
+      "description": "Folders and related config to run jock plugins on.",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+          "description": "Folder and related config to run jock plugins on.",
+          "type": "object",
+          "properties": {
+            "location": {
+              "description": "Location of the folder.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "location"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "required": [
+    "folders"
+  ],
+  "additionalProperties": false
+}
