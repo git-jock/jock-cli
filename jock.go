@@ -2,8 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/git-jock/jock-cli/shared"
+	"github.com/hashicorp/go-plugin"
 	"github.com/spf13/viper"
+	"io/ioutil"
+	"log"
 	"os"
+	"os/exec"
 )
 
 func main() {
@@ -91,6 +96,40 @@ func runPlugin(invocation *InvocationDetails) {
 	fmt.Printf("Plugin:      %s\n", invocation.plugin)
 	fmt.Printf("Plugin Args: %s\n", invocation.pluginArgs)
 	fmt.Printf("Folders:     %s\n", invocation.folders)
+
+	log.SetOutput(ioutil.Discard)
+
+	client := plugin.NewClient(&plugin.ClientConfig{
+		HandshakeConfig:  shared.HandShake,
+		Plugins:          shared.PluginMap,
+		Cmd:              exec.Command("sh", "-c", "./example/example"),
+		AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC},
+	})
+	defer client.Kill()
+
+	rpcClient, err := client.Client()
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
+	}
+
+	raw, err := rpcClient.Dispense("grpcPlugin")
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
+	}
+
+	jp := raw.(shared.JP)
+
+	result, err := jp.Run(invocation.pluginArgs)
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
+	}
+
+	fmt.Println(result)
+
+	os.Exit(0)
 }
 
 /**********************************************

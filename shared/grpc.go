@@ -13,7 +13,10 @@ func (m *GRPCClient) Run(args []string) ([]string, error) {
 	resp, err := m.client.Run(context.Background(), &proto.RunRequest{
 		Args: args,
 	})
-	return resp.Log, err
+	if resp != nil {
+		return resp.Log, err
+	}
+	return nil, err
 }
 
 type GRPCServer struct {
