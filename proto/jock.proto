@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+package proto;
+
+message RunRequest {
+  repeated string args = 1;
+}
+
+message RunResponse {
+  repeated string log = 1;
+}
+
+service JP {
+  rpc Run(RunRequest) returns (RunResponse);
+}
