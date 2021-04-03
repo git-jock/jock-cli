@@ -24,7 +24,10 @@ type GRPCServer struct {
 	Impl JP
 }
 
-func (m *GRPCServer) Run(_ context.Context, req *proto.RunRequest) (*proto.RunResponse, error) {
+func (m *GRPCServer) Run(ctx context.Context, req *proto.RunRequest) (*proto.RunResponse, error) {
 	l, err := m.Impl.Run(req.Args)
-	return &proto.RunResponse{Log: l}, err
+	if l != nil {
+		return &proto.RunResponse{Log: l}, err
+	}
+	return nil, err
 }
