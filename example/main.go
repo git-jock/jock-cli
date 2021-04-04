@@ -14,7 +14,9 @@ func (JP) Run(args []string) ([]string, error) {
 func main() {
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: shared.HandShake,
-		Plugins: shared.PluginMap, // TODO: Confirm
+		Plugins: map[string]plugin.Plugin{
+			"jk": &shared.JPGRPCPlugin{Impl: &JP{}},
+		},
 		GRPCServer: plugin.DefaultGRPCServer,
 	})
 }

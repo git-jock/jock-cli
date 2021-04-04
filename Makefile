@@ -14,4 +14,5 @@ all:
 	protoc --go_out=. --go_opt=paths=source_relative \
 	  --go-grpc_out=. --go-grpc_opt=paths=source_relative \
 	  proto/jock.proto && \
-	go build jock.go && go build -o example ./example
+	go build jock.go && \
+	go build -o example ./example

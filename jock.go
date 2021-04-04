@@ -5,8 +5,6 @@ import (
 	"github.com/git-jock/jock-cli/shared"
 	"github.com/hashicorp/go-plugin"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 )
@@ -97,7 +95,7 @@ func runPlugin(invocation *InvocationDetails) {
 	fmt.Printf("Plugin Args: %s\n", invocation.pluginArgs)
 	fmt.Printf("Folders:     %s\n", invocation.folders)
 
-	log.SetOutput(ioutil.Discard)
+	//log.SetOutput(ioutil.Discard)
 
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig:  shared.HandShake,
