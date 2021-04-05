@@ -35,7 +35,8 @@ Invocation
  **********************************************/
 
 type FolderConfig struct {
-	Location string `mapstructure:"location"`
+	Location string                 `mapstructure:"location"`
+	Plugins  map[string]interface{} `mapstructure:"plugins"`
 }
 
 // Holds the processed details of the jock invocation for logic to be applied later.
@@ -94,6 +95,10 @@ func runPlugin(invocation *InvocationDetails) {
 	fmt.Printf("Plugin:      %s\n", invocation.plugin)
 	fmt.Printf("Plugin Args: %s\n", invocation.pluginArgs)
 	fmt.Printf("Folders:     %s\n", invocation.folders)
+
+	for k, v := range invocation.folders {
+		fmt.Printf("%s config for %s: %s\n", invocation.plugin, k, v.Plugins[invocation.plugin])
+	}
 
 	//log.SetOutput(ioutil.Discard)
 
