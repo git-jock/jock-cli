@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/git-jock/jock-cli/proto"
 	"github.com/git-jock/jock-cli/shared"
 	"github.com/hashicorp/go-plugin"
 	"github.com/spf13/viper"
@@ -124,7 +125,10 @@ func runPlugin(invocation *InvocationDetails) {
 
 	jp := raw.(shared.JP)
 
-	result, err := jp.Run(invocation.pluginArgs)
+	var req proto.RunRequest
+	req.Args = invocation.pluginArgs
+
+	result, err := jp.Run(&req)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)

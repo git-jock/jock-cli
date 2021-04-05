@@ -17,11 +17,11 @@ var PluginMap = map[string]plugin.Plugin{
 	"grpcPlugin": &JPGRPCPlugin{},
 }
 
-type JP interface { // 29: KV
-	Run([]string) ([]string, error)
+type JP interface {
+	Run(*proto.RunRequest) ([]string, error)
 }
 
-type JPGRPCPlugin struct { // 50: KVGRPCPlugin
+type JPGRPCPlugin struct {
 	plugin.Plugin
 	Impl JP
 }

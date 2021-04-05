@@ -9,10 +9,8 @@ type GRPCClient struct {
 	client proto.JPClient
 }
 
-func (m *GRPCClient) Run(args []string) ([]string, error) {
-	resp, err := m.client.Run(context.Background(), &proto.RunRequest{
-		Args: args,
-	})
+func (m *GRPCClient) Run(req *proto.RunRequest) ([]string, error) {
+	resp, err := m.client.Run(context.Background(), req)
 	if resp != nil {
 		return resp.Log, err
 	}
@@ -25,7 +23,7 @@ type GRPCServer struct {
 }
 
 func (m *GRPCServer) Run(ctx context.Context, req *proto.RunRequest) (*proto.RunResponse, error) {
-	l, err := m.Impl.Run(req.Args)
+	l, err := m.Impl.Run(req)
 	if l != nil {
 		return &proto.RunResponse{Log: l}, err
 	}
