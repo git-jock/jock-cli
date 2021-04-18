@@ -32,7 +32,7 @@ func run(invocation *InvocationDetails) {
 Invocation
  **********************************************/
 
-// Holds the processed details of the jock invocation for logic to be applied later.
+// InvocationDetails holds the processed details of the jock invocation for logic to be applied later.
 type InvocationDetails struct {
 	version    bool
 	help       bool

@@ -11,7 +11,7 @@ type FolderConfig struct {
 	Plugins  map[string]map[string]string `mapstructure:"plugins"`
 }
 
-// Reads the config file from ~/.jockrc
+// ReadConfig reads the config file from ~/.jockrc
 func ReadConfig() {
 	viper.SetConfigName(".jockrc")
 	viper.SetConfigType("yaml")
@@ -29,7 +29,7 @@ func ReadConfig() {
 
 const FOLDERS = "folders"
 
-// Checks that the config contains the specified folder, and returns marshalled FolderConfig if so.
+// GetFolderConfig checks that the config contains the specified folder, and returns marshalled FolderConfig if so.
 func GetFolderConfig(name string) FolderConfig {
 	folder := FolderConfig{}
 

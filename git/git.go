@@ -4,23 +4,50 @@ import (
 	"fmt"
 	"github.com/git-jock/jock-cli/config"
 	"os"
+	"os/exec"
+	"strings"
 )
 
-type run string
+func getPath(location string) string {
+	location = strings.ReplaceAll(location, "~", "$HOME")
+	location = os.ExpandEnv(location)
+	return location
+}
+
+const git = "git"
 
 func gitClone(args []string, folders map[string]config.FolderConfig) {
+	beginning := []string{"clone"}
+	ending := args[1:]
 
+	buildArgs := func(remote string, location string) []string {
+		return append(append(beginning, remote, location), ending...)
+	}
+
+	for k, v := range folders {
+		if gitConfig, ok := v.Plugins[git]; ok {
+			fmt.Printf("Running [%s] on [%s]\n", args[0], k)
+			cmd := exec.Command(git, buildArgs(gitConfig["remote"], getPath(v.Location))...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			_ = cmd.Run()
+		}
+	}
 }
 
 func gitCommon(args []string, folders map[string]config.FolderConfig) {
+	beginning := []string{"-C"}
+
+	buildArgs := func(location string) []string {
+		return append(append(beginning, location), args...)
+	}
+
 	for k, v := range folders {
-		if gitConfig, ok := v.Plugins["git"]; ok {
-			fmt.Printf("Running %s on folder %s in path %s", args[0], k, gitConfig)
-			//cmd := exec.Command("git", args[0], "-C", gitConfig["remote"])
-			//cmd.Stdout = os.Stdout
-			//cmd.Stderr = os.Stderr
-			//_ = cmd.Run()
-		}
+		fmt.Printf("Running [%s] on [%s]\n", args[0], k)
+		cmd := exec.Command(git, buildArgs(getPath(v.Location))...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		_ = cmd.Run()
 	}
 }
 
